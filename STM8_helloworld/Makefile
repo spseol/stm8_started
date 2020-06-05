@@ -1,6 +1,6 @@
 # STM8 device (for supported devices see stm8s.h)
-DEVICE       =STM8S003
-MCU          =stm8s003?3
+DEVICE       =STM8S208
+MCU          =stm8s208rb
 
 SDCC         =sdcc
 
@@ -32,11 +32,13 @@ StdPeriph    =$(SOURCE_DIR)/STM8S_StdPeriph_Driver
 INCLUDEPATH  =-I$(SOURCE_DIR)/
 INCLUDEPATH +=-I$(StdPeriph)/inc
 
-def: compile flash
+#def: compile flash
+def: compile
+install: flash
 
 all: clean compile_obj compile
 
-compile:
+compile: compile_obj
 	$(SDCC) $(CFLAGS) $(INCLUDEPATH) -D $(DEVICE) -o $(OUTPUT_DIR)/ $(SOURCE_DIR)/$(SOURCE).c \
 	$(OUTPUT_DIR)/stm8s_gpio.rel
 #	$(OUTPUT_DIR)/stm8s_clk.rel \
@@ -53,7 +55,7 @@ clean:
 	rm -Rrf $(OUTPUT_DIR)
 
 flash:
-	stm8flash -c stlinkv2 -p $(MCU) -w $(OUTPUT_DIR)/$(SOURCE).elf
+	stm8flash -c stlinkv21 -p $(MCU) -w $(OUTPUT_DIR)/$(SOURCE).elf
 
 openocd:
 	openocd -f interface/stlink.cfg -f target/stm8s003.cfg -c "init" -c "reset halt"
